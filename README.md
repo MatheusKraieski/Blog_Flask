@@ -5,3 +5,15 @@ Blog posts - how to use Flask
 ```
 pip install flask
 ```
+### email validator
+```
+pip install email_validator
+```
+### flask wtf (forms)
+```
+pip install flask-wtf
+```
+### SQLAlchemy
+```
+pip install flask-SQLAlchemy
+```
