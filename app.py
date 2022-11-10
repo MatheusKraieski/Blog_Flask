@@ -66,6 +66,11 @@ def home():
 def about():
     return render_template('about.html', title='About')
 
+@app.route("/users")
+def users():
+    users = db.session.execute(db.select(User).order_by(User.username)).scalars()
+    return "lol"
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
