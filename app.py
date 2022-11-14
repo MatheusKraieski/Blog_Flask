@@ -69,7 +69,7 @@ def about():
 @app.route("/users")
 def users():
     users = db.session.execute(db.select(User).order_by(User.username)).scalars()
-    return "lol"
+    return('oi lindo')
 
 
 @app.route("/register", methods=['GET', 'POST'])
