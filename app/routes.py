@@ -1,20 +1,8 @@
-from flask import Flask, render_template, url_for, flash, redirect
-from forms import RegistrationForm, LoginForm
-from flask_sqlalchemy import SQLAlchemy
-
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['SECRET_KEY'] = 'bcc9bdc83147456ebd8da8bfe5eec301'
-db = SQLAlchemy()
-db.init_app(app)
-
-from models import User, Post
-
-with app.app_context():
-    db.create_all()
- 
-
+from flask import render_template, url_for, flash, redirect
+from app.models import User, Post
+from app import app, bcrypt
+from app.forms import RegistrationForm, LoginForm
+from app import db
 
 posts = [
     {
@@ -34,7 +22,6 @@ posts = [
 
 ]
 
-
 @app.route("/")
 @app.route("/home")
 def home():
@@ -45,18 +32,18 @@ def home():
 def about():
     return render_template('about.html', title='About')
 
-@app.route("/users")
-def users():
-    users = db.session.execute(db.select(User).order_by(User.username)).scalars()
-    return('oi lindo')
-
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f"Account created for {form.username.data}!", 'success')
-        return redirect(url_for('home'))
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+
+        db.session.add(user)
+        db.session.commit()
+        flash("Your account has been created", 'success')
+        return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
 
@@ -68,9 +55,5 @@ def login():
             flash('you have been logged in!', 'success')
             return redirect(url_for('home'))
         else:
-             flash('Login Unsuccessful, please check', 'danger')   
+             flash('Login Unsuccessful, please check', 'danger')
     return render_template('login.html', title='login', form=form)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
