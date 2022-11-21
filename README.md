@@ -17,3 +17,8 @@ pip install flask-wtf
 ```
 pip install flask-SQLAlchemy
 ```
+
+### Bcrypt
+```
+pip install flask-bcrypt
+```
